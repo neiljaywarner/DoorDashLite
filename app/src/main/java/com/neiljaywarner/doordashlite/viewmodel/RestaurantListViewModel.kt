@@ -7,9 +7,12 @@ import com.neiljaywarner.doordashlite.model.Restaurant
 import com.neiljaywarner.doordashlite.model.getDummyRestaurant
 import com.neiljaywarner.doordashlite.network.Resource
 import com.neiljaywarner.doordashlite.network.ResourceState
+import com.neiljaywarner.doordashlite.network.ServiceGenerator
 import io.reactivex.*
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.toSingle
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subscribers.DisposableSubscriber
 import timber.log.Timber
 
@@ -39,19 +42,19 @@ class RestaurantListViewModel : ViewModel() {
         fun fetchRestaurants() {
             restaurantsLiveData.postValue(Resource(ResourceState.LOADING, null, null))
 
-            /*
-            disposable = Observable.create(ObservableOnSubscribe<String>
-            { emitter -> emitter.onNext(fetchFromServer()) })
+
+            // TODO: consider adding some logic so if in airplane mode or not online, don't try to hit the network
+            // etc
+
+            // TODO: https://medium.com/@biratkirat/8-rxjava-rxandroid-in-kotlin-e599509753c8
+            val disposable = ServiceGenerator.getDoorDashService().getRestaurants()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe{ result ->  displayResult(result) }
-            */
-            // TODO: https://medium.com/@biratkirat/8-rxjava-rxandroid-in-kotlin-e599509753c8
-            listOf(getDummyRestaurant()).toSingle().subscribe(object : SingleObserver<List<Restaurant>> {
+                    .subscribe(object : SingleObserver<List<Restaurant>> {
                 override fun onError(e: Throwable) {
                     Timber.e(e)
                     // TODO: map to friendly error
-                    restaurantsLiveData.postValue(Resource(ResourceState.SUCCESS, null, e.localizedMessage))
+                    restaurantsLiveData.postValue(Resource(ResourceState.ERROR, null, e.localizedMessage))
                 }
 
                 override fun onSuccess(list: List<Restaurant>) {
@@ -63,6 +66,7 @@ class RestaurantListViewModel : ViewModel() {
                     Timber.d("OnSubscribe for getRestaurants")
                 }
             })
+
             /*
             TODO: from retrofit callable
              */
