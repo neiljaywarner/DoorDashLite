@@ -19,7 +19,7 @@ import timber.log.Timber
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel : RestaurantListViewModel
-    private val restaurantsAdapter : RestaurantsAdapter = RestaurantsAdapter(emptyList()) {onRestaurantClicked(it) }
+    private val restaurantsAdapter : RestaurantsAdapter = RestaurantsAdapter(emptyList()) { onRestaurantClicked(it) }
 
     private fun onRestaurantClicked(restaurant: Restaurant) {
         Timber.d("User clicked on restaurant ${restaurant.name}")
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(RestaurantListViewModel::class.java)
         recyclerViewRestaurants.apply {
             layoutManager = LinearLayoutManager(this@MainActivity, VERTICAL, false)
-            hasFixedSize()
+            setHasFixedSize(true)
             adapter = restaurantsAdapter
         }
     }
