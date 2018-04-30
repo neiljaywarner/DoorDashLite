@@ -4,86 +4,86 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.neiljaywarner.doordashlite.model.Restaurant
-import com.neiljaywarner.doordashlite.model.getDummyRestaurant
 import com.neiljaywarner.doordashlite.network.Resource
 import com.neiljaywarner.doordashlite.network.ResourceState
 import com.neiljaywarner.doordashlite.network.ServiceGenerator
-import io.reactivex.*
+import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.toSingle
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subscribers.DisposableSubscriber
 import timber.log.Timber
 
 class RestaurantListViewModel : ViewModel() {
 
-        private val restaurantsLiveData: MutableLiveData<Resource<List<Restaurant>>> = MutableLiveData()
+    private val restaurantsLiveData: MutableLiveData<Resource<List<Restaurant>>> = MutableLiveData()
 
-        lateinit var disposable: Disposable
-        init {
-            fetchRestaurants()
-        }
+    val compositeDisposable = CompositeDisposable()
 
-        override fun onCleared() {
-            disposable.dispose()
-            super.onCleared()
-        }
+    init {
+        fetchRestaurants()
+    }
 
-        fun getRestaurants(): LiveData<Resource<List<Restaurant>>> {
-            return restaurantsLiveData
-        }
+    override fun onCleared() {
+        compositeDisposable.dispose()
+        super.onCleared()
+    }
 
-        //https://medium.com/@biratkirat/8-rxjava-rxandroid-in-kotlin-e599509753c8
-        //TODO: Note: if time was permitting, consider seriously making local repository source of truth
+    fun getRestaurants(): LiveData<Resource<List<Restaurant>>> {
+        return restaurantsLiveData
+    }
+
+    //https://medium.com/@biratkirat/8-rxjava-rxandroid-in-kotlin-e599509753c8
+    //TODO: Note: if time was permitting, consider seriously making local repository source of truth
     // TODO: use this for mockwebserver unit tests.
     //https://android.jlelse.eu/unit-test-api-calls-with-mockwebserver-d4fab11de847
     // this guys' very good
-        fun fetchRestaurants() {
-            restaurantsLiveData.postValue(Resource(ResourceState.LOADING, null, null))
+    fun fetchRestaurants() {
+        restaurantsLiveData.postValue(Resource(ResourceState.LOADING, null, null))
 
 
-            // TODO: consider adding some logic so if in airplane mode or not online, don't try to hit the network
-            // etc
+        // TODO: consider adding some logic so if in airplane mode or not online, don't try to hit the network
+        // etc
 
-            // TODO: https://medium.com/@biratkirat/8-rxjava-rxandroid-in-kotlin-e599509753c8
-            val disposable = ServiceGenerator.getDoorDashService().getRestaurants()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(object : SingleObserver<List<Restaurant>> {
-                override fun onError(e: Throwable) {
-                    Timber.e(e)
-                    // TODO: map to friendly error
-                    restaurantsLiveData.postValue(Resource(ResourceState.ERROR, null, e.localizedMessage))
-                }
+        // TODO: https://medium.com/@biratkirat/8-rxjava-rxandroid-in-kotlin-e599509753c8
+        ServiceGenerator.getDoorDashService().getRestaurants()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : SingleObserver<List<Restaurant>> {
+                    override fun onError(e: Throwable) {
+                        Timber.e(e)
+                        // TODO: map to friendly error
+                        restaurantsLiveData.postValue(Resource(ResourceState.ERROR, null, e.localizedMessage))
+                    }
 
-                override fun onSuccess(list: List<Restaurant>) {
-                    restaurantsLiveData.postValue(Resource(ResourceState.SUCCESS, list, null))
+                    override fun onSuccess(list: List<Restaurant>) {
+                        restaurantsLiveData.postValue(Resource(ResourceState.SUCCESS, list, null))
 
-                }
+                    }
 
-                override fun onSubscribe(d: Disposable) {
-                    Timber.d("OnSubscribe for getRestaurants")
-                }
-            })
+                    override fun onSubscribe(d: Disposable) {
+                        compositeDisposable.add(d)
+                        Timber.d("OnSubscribe for getRestaurants")
+                    }
+                })
 
-            /*
-            TODO: from retrofit callable
-             */
-            /*
-            val tvShowSingle = Single.fromCallable(object : Callable<List<String>>() {
+        /*
+        TODO: from retrofit callable
+         */
+        /*
+        val tvShowSingle = Single.fromCallable(object : Callable<List<String>>() {
 
-                @Throws(Exception::class)
-                fun call(): List<String> {
-                    return mRestClient.getFavoriteTvShows()
-                }
-            })
-            */
-            //todo: retrofit
+            @Throws(Exception::class)
+            fun call(): List<String> {
+                return mRestClient.getFavoriteTvShows()
+            }
+        })
+        */
+        //todo: retrofit
 
 
 
-        }
+    }
 
 
 }
