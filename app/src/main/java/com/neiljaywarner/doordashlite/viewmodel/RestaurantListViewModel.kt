@@ -3,6 +3,8 @@ package com.neiljaywarner.doordashlite.viewmodel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.github.ajalt.timberkt.d
+import com.github.ajalt.timberkt.e
 import com.neiljaywarner.doordashlite.model.Restaurant
 import com.neiljaywarner.doordashlite.network.Resource
 import com.neiljaywarner.doordashlite.network.ResourceState
@@ -12,7 +14,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
 
 class RestaurantListViewModel : ViewModel() {
 
@@ -38,7 +39,7 @@ class RestaurantListViewModel : ViewModel() {
     // TODO: use this for mockwebserver unit tests.
     //https://android.jlelse.eu/unit-test-api-calls-with-mockwebserver-d4fab11de847
     // this guys' very good
-    fun fetchRestaurants() {
+    private fun fetchRestaurants() {
         restaurantsLiveData.postValue(Resource(ResourceState.LOADING, null, null))
 
 
@@ -50,38 +51,23 @@ class RestaurantListViewModel : ViewModel() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : SingleObserver<List<Restaurant>> {
-                    override fun onError(e: Throwable) {
-                        Timber.e(e)
+                    override fun onError(throwable: Throwable) {
+                        e { "Error in getRestaurants ${throwable.message}"}
                         // TODO: map to friendly error
-                        restaurantsLiveData.postValue(Resource(ResourceState.ERROR, null, e.localizedMessage))
+                        restaurantsLiveData.postValue(Resource(ResourceState.ERROR, null, throwable.localizedMessage))
                     }
 
                     override fun onSuccess(list: List<Restaurant>) {
+                        d { "NJWLoaded ${list.size}"}
                         restaurantsLiveData.postValue(Resource(ResourceState.SUCCESS, list, null))
 
                     }
 
                     override fun onSubscribe(d: Disposable) {
                         compositeDisposable.add(d)
-                        Timber.d("OnSubscribe for getRestaurants")
+                        d { "onSubscribe or getRestaurants()"}
                     }
                 })
-
-        /*
-        TODO: from retrofit callable
-         */
-        /*
-        val tvShowSingle = Single.fromCallable(object : Callable<List<String>>() {
-
-            @Throws(Exception::class)
-            fun call(): List<String> {
-                return mRestClient.getFavoriteTvShows()
-            }
-        })
-        */
-        //todo: retrofit
-
-
 
     }
 
