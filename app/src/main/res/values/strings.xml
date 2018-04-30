@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">DoorDashLite</string>
+    <string name="no_restaurants_found">No restaurants found</string>
+    <string name="error_please_close_app_and_try_again">Error; please close app and try again.</string>
+</resources>
