@@ -58,7 +58,7 @@ class RestaurantListViewModel : ViewModel() {
                     }
 
                     override fun onSuccess(list: List<Restaurant>) {
-                        d { "NJWLoaded ${list.size}"}
+                        d { "Loaded ${list.size} restaurants"}
                         restaurantsLiveData.postValue(Resource(ResourceState.SUCCESS, list, null))
 
                     }
@@ -68,6 +68,8 @@ class RestaurantListViewModel : ViewModel() {
                         d { "onSubscribe or getRestaurants()"}
                     }
                 })
+
+        //TODO: Utilize repository pattern and local cache.
 
     }
 

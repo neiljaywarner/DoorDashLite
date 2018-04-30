@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView.VERTICAL
 import android.view.View
@@ -14,7 +15,7 @@ import com.neiljaywarner.doordashlite.network.Resource
 import com.neiljaywarner.doordashlite.network.ResourceState
 import com.neiljaywarner.doordashlite.viewmodel.RestaurantListViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import timber.log.Timber
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private val restaurantsAdapter : RestaurantsAdapter = RestaurantsAdapter(emptyList()) { onRestaurantClicked(it) }
 
     private fun onRestaurantClicked(restaurant: Restaurant) {
-        Timber.d("User clicked on restaurant ${restaurant.name}")
+        d { "user clicked on restaurant: ${restaurant.name}"}
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@MainActivity, VERTICAL, false)
             setHasFixedSize(true)
             adapter = restaurantsAdapter
+            addItemDecoration(DividerItemDecoration(this@MainActivity, VERTICAL))
         }
     }
 
@@ -63,7 +65,6 @@ class MainActivity : AppCompatActivity() {
         view_error.visibility = View.GONE
         progress.visibility = View.GONE
         if (list != null && list.isNotEmpty()) {
-            d { "NJW-->size of list = ${list.size}"}
             updateListView(list)
             recyclerViewRestaurants.visibility = View.VISIBLE
         } else {

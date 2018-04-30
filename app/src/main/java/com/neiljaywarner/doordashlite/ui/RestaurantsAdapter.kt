@@ -24,7 +24,9 @@ class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     // TODO: container pattern
     fun bind(restaurant: Restaurant, listener: (Restaurant) -> Unit) = with(itemView) {
         textViewName.text = restaurant.name
-        //imageViewLogo.loadUrl(item.url)
+        imageViewLogo.loadUrl(restaurant.cover_img_url)
+        textViewDescription.text = restaurant.description
+        textViewStatus.text = restaurant.status
         setOnClickListener { listener(restaurant) }
     }
 }
