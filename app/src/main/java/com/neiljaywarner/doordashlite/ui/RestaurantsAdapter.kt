@@ -18,7 +18,6 @@ class RestaurantsAdapter(var restaurants: List<Restaurant> = emptyList(), privat
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(restaurants[position], listener)
 
-
 }
 
 class ViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
@@ -30,7 +29,6 @@ class ViewHolder(override val containerView: View) : RecyclerView.ViewHolder(con
         itemView.setOnClickListener { listener(restaurant) }
     }
 }
-
 
 // TODO: Move to ViewExtensions.kt
 fun ViewGroup.inflate(layoutRes: Int): View {
