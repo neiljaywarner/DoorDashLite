@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel : RestaurantListViewModel
-    private val restaurantsAdapter : RestaurantsAdapter = RestaurantsAdapter(emptyList()) { onRestaurantClicked(it) }
+    private val restaurantsAdapter = RestaurantsAdapter(emptyList()) { onRestaurantClicked(it) }
 
     private fun onRestaurantClicked(restaurant: Restaurant) {
         d { "user clicked on restaurant: ${restaurant.name}"}

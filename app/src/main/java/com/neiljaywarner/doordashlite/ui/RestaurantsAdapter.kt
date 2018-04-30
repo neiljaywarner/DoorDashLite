@@ -8,7 +8,8 @@ import android.widget.ImageView
 import com.neiljaywarner.doordashlite.R
 import com.neiljaywarner.doordashlite.model.Restaurant
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_restaurant.view.*
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_restaurant.*
 
 class RestaurantsAdapter(var restaurants: List<Restaurant> = emptyList(), private val listener: (Restaurant) -> Unit) : RecyclerView.Adapter<ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(parent.inflate(R.layout.item_restaurant))
@@ -20,14 +21,13 @@ class RestaurantsAdapter(var restaurants: List<Restaurant> = emptyList(), privat
 
 }
 
-class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    // TODO: container pattern
-    fun bind(restaurant: Restaurant, listener: (Restaurant) -> Unit) = with(itemView) {
-        textViewName.text = restaurant.name
-        imageViewLogo.loadUrl(restaurant.cover_img_url)
-        textViewDescription.text = restaurant.description
-        textViewStatus.text = restaurant.status
-        setOnClickListener { listener(restaurant) }
+class ViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    fun bind(restaurant: Restaurant, listener: (Restaurant) -> Unit) = with(restaurant) {
+        textViewName.text = name
+        imageViewLogo.loadUrl(cover_img_url)
+        textViewDescription.text = description
+        textViewStatus.text = status
+        itemView.setOnClickListener { listener(restaurant) }
     }
 }
 
@@ -38,8 +38,7 @@ fun ViewGroup.inflate(layoutRes: Int): View {
 }
 
 fun ImageView.loadUrl(url: String) {
-    // TODO: Error image and loading image.
+    // TODO: Error image and loading image eventually
     Picasso.get().load(url).into(this)
 }
 
-//imageView.loadUrl(url)

@@ -22,6 +22,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    //for layoutcontainer and parcelize
+    androidExtensions {
+        experimental = true
+    }
 }
 
 dependencies {
