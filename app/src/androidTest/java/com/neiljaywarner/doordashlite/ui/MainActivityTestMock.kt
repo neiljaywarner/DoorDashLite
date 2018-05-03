@@ -50,6 +50,7 @@ class MainActivityTestMock {
         val mockResponse = MockResponse()
                 .setResponseCode(500) // Simulate a 500 HTTP Code
 
+        // TOOD: a test where we set a body.
 
         mockServer.enqueue(mockResponse)
 
