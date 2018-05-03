@@ -10,14 +10,16 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ServiceGenerator {
     // e.g. https://api.doordash.com/v2/restaurant/?lat=37.422740&lng=-122.139956
-    val API_BASE_URL = "https://api.doordash.com/"
+    var apiBaseUrl = "https://api.doordash.com/"
 
     private val httpClient = OkHttpClient.Builder()
 
-    private val builder = Retrofit.Builder()
-            .baseUrl(API_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+    private val builder by lazy {
+        Retrofit.Builder()
+                .baseUrl(apiBaseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+    }
 
 
     fun <S> createService(serviceClass: Class<S>): S {

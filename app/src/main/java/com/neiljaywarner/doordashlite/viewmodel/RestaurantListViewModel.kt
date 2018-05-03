@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel
 import com.github.ajalt.timberkt.d
 import com.github.ajalt.timberkt.e
 import com.neiljaywarner.doordashlite.model.Restaurant
+import com.neiljaywarner.doordashlite.network.DoorDashApi
 import com.neiljaywarner.doordashlite.network.Resource
 import com.neiljaywarner.doordashlite.network.ResourceState
 import com.neiljaywarner.doordashlite.network.ServiceGenerator
@@ -15,7 +16,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-class RestaurantListViewModel : ViewModel() {
+//Declared for testing for now for Mockito
+open class RestaurantListViewModel : ViewModel() {
 
     private val restaurantsLiveData: MutableLiveData<Resource<List<Restaurant>>> = MutableLiveData()
 
@@ -34,12 +36,15 @@ class RestaurantListViewModel : ViewModel() {
         return restaurantsLiveData
     }
 
+    fun getDoorDashApi() : DoorDashApi = ServiceGenerator.getDoorDashService()
+    fun getRestaurantListSingle() = getDoorDashApi().getRestaurants()
+
     //https://medium.com/@biratkirat/8-rxjava-rxandroid-in-kotlin-e599509753c8
     //TODO: Note: if time was permitting, consider seriously making local repository source of truth
     // TODO: use this for mockwebserver unit tests.
     //https://android.jlelse.eu/unit-test-api-calls-with-mockwebserver-d4fab11de847
     // this guys' very good
-    private fun fetchRestaurants() {
+    fun fetchRestaurants() {
         restaurantsLiveData.postValue(Resource(ResourceState.LOADING, null, null))
 
 
@@ -47,7 +52,7 @@ class RestaurantListViewModel : ViewModel() {
         // etc
 
         // TODO: https://medium.com/@biratkirat/8-rxjava-rxandroid-in-kotlin-e599509753c8
-        ServiceGenerator.getDoorDashService().getRestaurants()
+        getRestaurantListSingle()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : SingleObserver<List<Restaurant>> {
