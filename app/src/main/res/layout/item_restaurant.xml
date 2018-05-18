@@ -8,6 +8,7 @@
 
     <ImageView
         android:id="@+id/imageViewFavorite"
+        android:layout_margin="8dp"
         android:contentDescription="@string/toggle_favorite"
         android:src="@android:drawable/star_off"
         android:layout_width="wrap_content"

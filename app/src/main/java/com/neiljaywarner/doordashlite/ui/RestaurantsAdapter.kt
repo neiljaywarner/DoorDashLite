@@ -27,11 +27,10 @@ class ViewHolder(override val containerView: View) : RecyclerView.ViewHolder(con
         imageViewLogo.loadUrl(cover_img_url)
         textViewDescription.text = description
         textViewStatus.text = status
-       // starView.setOnClickListener { listener(restaurant) }
         val isFavorite = prefs.contains(restaurant.id.toString() )
         setStarred(imageViewFavorite, isFavorite)
 
-
+        // TODO: Test un-favoriting, there might be a bug there.
         imageViewFavorite.setOnClickListener {
             //TODO: consider updating in teh acativity and calling notifyItemUpdated
             setStarred(imageViewFavorite, !isFavorite)
