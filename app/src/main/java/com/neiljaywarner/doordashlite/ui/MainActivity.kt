@@ -17,13 +17,42 @@ import com.neiljaywarner.doordashlite.viewmodel.RestaurantListViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 
+const val PREFS_FILENAME = "com.doordashlite.prefs"
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel : RestaurantListViewModel
-    private val restaurantsAdapter = RestaurantsAdapter(emptyList()) { onRestaurantClicked(it) }
+    private val restaurantsAdapter by lazy { RestaurantsAdapter(prefs, emptyList()) { onFavoriteClicked(it) } }
+    private val prefs by lazy { this.getSharedPreferences(PREFS_FILENAME, 0)}
 
-    private fun onRestaurantClicked(restaurant: Restaurant) {
+    private fun onFavoriteClicked(restaurant: Restaurant) {
         d { "user clicked on restaurant: ${restaurant.name}"}
+        if (restaurant.id == null) {
+            return
+        }
+
+        if (isFavorite(restaurant)) {
+            removeFavorite(restaurant.id)
+        } else {
+            saveFavorite(restaurant.id)
+        }
+
+    }
+
+    // TODO: Think if we really want to do this
+    // when I don't have such a headache
+    // We probably don't, but it is unique hashmap.
+    // Feel free to lash me with wet noodle for it.
+    private fun isFavorite(id : Int) : Boolean = prefs.getBoolean(id.toString(), false)
+
+    private fun isFavorite(restaurant : Restaurant) : Boolean = isFavorite(restaurant.id as Int)
+
+    private fun saveFavorite(id : Int) {
+        prefs.edit().putBoolean(id.toString(), true).apply()
+    }
+
+    private fun removeFavorite(id : Int) {
+        prefs.edit().remove(id.toString()).apply()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

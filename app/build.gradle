@@ -61,4 +61,8 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.github.ajalt:timberkt:1.5.0'
     implementation 'org.mockito:mockito-core:2.18.3'
+
+    // TODO: Utilize this after upgrading all to androidx as needed, etc.
+   // implementation 'androidx.core:core-ktx:1.0.0-alpha1'
+
 }
